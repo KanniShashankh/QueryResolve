@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Lab Management System</title>
     <style>
@@ -9,7 +10,8 @@
         }
 
         .container {
-            max-width: 1500px; /* Increased max-width value for wider container */
+            max-width: 1500px;
+            
             margin: 0 auto;
             padding: 20px;
             background-color: #fff;
@@ -22,22 +24,28 @@
         }
 
         table {
-            width: 100%;
-            border-collapse: collapse;
+
             margin-top: 20px;
+
         }
 
-        th, td {
+        th,
+        td {
             border: 1px solid #ccc;
             padding: 8px;
             text-align: left;
             word-break: break-all;
+            border-radius: 10px;
+            
         }
 
         th {
-            background-color: #f2f2f2;
+            background-color: black;
             font-weight: bold;
-            white-space: nowrap; /* Added property to prevent text wrapping */
+            white-space: normal;
+            overflow-wrap: break-word;
+            color: whitesmoke;
+            
         }
 
         tr:nth-child(even) {
@@ -70,8 +78,67 @@
             color: #fff;
             text-decoration: none;
         }
+
+        /* Added styles for action buttons */
+        .action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            background-color: #4caf50;
+            color: #fff;
+            cursor: pointer;
+            border: none;
+            margin-top: 10px;
+        }
+
+        .action-btn:hover {
+            background-color: #45a049;
+        }
+
+        .action-btn:active {
+            background-color: #3e8e41;
+        }
+
+        .action-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .pending {
+            background-color: #ff9800;
+            color: #fff;
+        }
+
+        .processing {
+            background-color: #2196f3;
+            color: #fff;
+        }
+
+        .resolved {
+            background-color: #4caf50;
+            color: #fff;
+        }
+
+        /* Adjusted center alignment for table headers */
+        th:nth-child(15) {
+            text-align: center;
+        }
+
+        select {
+            border: none;
+            border-radius: 10px;
+            background-color: #2196f3;
+            padding: 5px;
+            color: white;
+            text-align: center;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>Lab Management System</h1>
@@ -80,40 +147,67 @@
                 <span class="gate-symbol">&#128682;</span>
             </a>
         </div>
-        
-        <h2><center>List of unresolved queries</center></h2>
+
+        <h2>
+            <center>List of unresolved queries</center>
+        </h2>
         <table>
             <tr>
                 <th>Query ID</th>
+                <th>Date and Time</th>
                 <th>Name</th>
                 <th>Email</th>
-                <th>Roll Number</th>
+                <th>Emp ID</th>
                 <th>Course</th>
                 <th>Year</th>
                 <th>Branch</th>
                 <th>Section</th>
                 <th>Lab</th>
                 <th>Lab Room Number</th>
+                <th>Block Number</th>
+                <th>Floor Number</th>
                 <th>Query</th>
+                <th>Token Number</th>
                 <th>Action</th>
             </tr>
-            <% for (let i = 0; i < queries.length; i++) { %>
+            <% for (let i=0; i < queries.length; i++) { %>
                 <tr>
                     <td><%- queries[i].id %></td>
+                    <td><%- queries[i].submission_date %></td>
                     <td><%- queries[i].name %></td>
                     <td><%- queries[i].email %></td>
-                    <td><%- queries[i].roll %></td>
+                    <td><%- queries[i].empid %></td>
                     <td><%- queries[i].course %></td>
                     <td><%- queries[i].year %></td>
                     <td><%- queries[i].branch %></td>
                     <td><%- queries[i].section %></td>
                     <td><%- queries[i].lab %></td>
                     <td><%- queries[i].room %></td>
+                    <td><%- queries[i].block_no %></td>
+                    <td><%- queries[i].floor_no %></td>
                     <td><%- queries[i].query %></td>
-                    <td><a href="/resolve_query?id=<%- queries[i].id %>">Resolve</a></td>
+                    <td><%- queries[i].token_number %></td>
+                    <td>
+                        <form action="/update_query" method="post">
+                            <input type="hidden" name="queryId" value="<%- queries[i].id %>">
+                            <select name="action">
+                                <option value="Pending" <% if (queries[i].resolved==='Pending' ) { %>selected<% } %>
+                                        >Pending</option>
+                                <option value="Processing" <% if (queries[i].resolved==='Processing' ) { %>selected<% }
+                                        %>>Processing</option>
+                                <option value="Resolved" <% if (queries[i].resolved==='Resolved' ) { %>selected<% } %>
+                                        >Resolved</option>
+                            </select>
+                            <button type="submit" class="action-btn">
+                                Update
+                            </button>
+                        </form>
+
+                    </td>
                 </tr>
-            <% } %>
+                <% } %>
         </table>
     </div>
 </body>
+
 </html>

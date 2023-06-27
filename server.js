@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
 const mysql = require('mysql2');
 const dotenv = require('dotenv');
+const path = require('path');
 dotenv.config();
 
 const app = express();
@@ -32,7 +33,8 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Serve static files
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
+
 
 // User side interface - Index page
 app.get('/', (req, res) => {
@@ -46,7 +48,7 @@ app.get('/user', (req, res) => {
 
 // Management side interface
 app.get('/management', (req, res) => {
-    db.query('SELECT * FROM queries WHERE resolved = 0', (err, results) => {
+    db.query('SELECT * FROM queries WHERE resolved = "Pending" OR resolved = "Processing"', (err, results) => {
         if (err) {
             throw err;
         }
@@ -54,72 +56,141 @@ app.get('/management', (req, res) => {
     });
 });
 
+// ...
+
 // Form submission and database processing
 app.post('/submit_query', (req, res) => {
-    let { name, email, roll, course, year, branch, section, lab, room, query } = req.body;
-    const resolved = 0;
-    if(query.length > 1){
-        query = query[1];
-    }
-    const queryData = { name, email, roll, course, year, branch, section, lab, room, query, resolved };
+    const { name, email, empid, course, year, branch, section, lab, room, block_no, floor_no, query } = req.body;
+    const resolved = 'Pending';
+
+    // Generate a unique token number 
+    const tokenNumber = Math.floor(1000 + Math.random() * 9000);
+
+    // Escape single quotes in the query field value
+    const escapedQuery = db.escape(query);
+
+    const queryData = {
+        name,
+        email,
+        empid,
+        course,
+        year,
+        branch,
+        section,
+        lab,
+        room,
+        block_no,
+        floor_no,
+        query: escapedQuery,
+        resolved,
+        token_number: tokenNumber
+    };
 
     db.query('INSERT INTO queries SET ?', queryData, (err, result) => {
         if (err) {
+            console.log('Error while inserting data into DB');
             throw err;
         }
+        console.log(tokenNumber);
         console.log('Query submitted successfully');
-        res.redirect('/');
+    });
+    res.render('successCard', { tokenNumber });
+
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.email_id,
+            pass: process.env.pass
+        }
+    });
+
+    const mailOptions = {
+        from: 'your_email',
+        to: queryData.email,
+        subject: 'Query Registered and Token Number Generated',
+        text: `Dear ${queryData.name},\n\nYour query regarding "${queryData.query}" has been registered with Token Number "${tokenNumber}".\n\nYou will receive an update regarding your query resolution, so stay tuned.\n\nThank you for reaching out to us!\n\nBest regards,\nThe Management Team`
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.log('Error while sending registered mail');
+            console.log(error);
+        } else {
+            console.log('Email notification sent: ' + info.response);
+        }
     });
 });
 
-// Resolve query and send email notification
-app.get('/resolve_query', (req, res) => {
-    const queryId = req.query.id;
+// ...
 
-    db.query('UPDATE queries SET resolved = 1 WHERE id = ?', queryId, (err, result) => {
+
+// Fetch query status based on token number
+app.post('/status', (req, res) => {
+    const { tokenNumber } = req.body;
+
+    db.query('SELECT resolved FROM queries WHERE token_number = ?', tokenNumber, (err, result) => {
         if (err) {
+            console.log('Error while fetching query status');
             throw err;
         }
+        const queryStatus = result[0] ? result[0].resolved : 'Not Found';
+        res.render('userQueryStatus', { queryStatus });
+    });
+});
 
-        db.query('SELECT * FROM queries WHERE id = ?', queryId, (err, result) => {
-            if (err) {
-                throw err;
-            }
+// Rendering query status page
+app.get('/status', (req, res) => {
+    res.render('userQueryStatus');
+})
 
-            const queryData = result[0];
+//Updating query status
+app.post('/update_query', (req, res) => {
+    const { queryId, action } = req.body;
 
-            // Create a SMTP transporter for sending emails
-            const transporter = nodemailer.createTransport({
-                service: 'gmail',
-                auth: {
-                    user: process.env.email_id,
-                    pass: process.env.pass
+    db.query('UPDATE queries SET resolved = ? WHERE id = ?', [action, queryId], (err, result) => {
+        if (err) {
+            console.log('Error while updating the query status');
+            throw err;
+        }
+        if (action === 'Resolved') {
+            db.query('SELECT * FROM queries WHERE id = ?', queryId, (err, result) => {
+                if (err) {
+                    throw err;
                 }
+
+                const queryData = result[0];
+
+                const transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        user: process.env.email_id,
+                        pass: process.env.pass
+                    }
+                });
+
+                const mailOptions = {
+                    from: 'your_email',
+                    to: queryData.email,
+                    subject: 'Query Resolution',
+                    text: `Dear ${queryData.name},\n\nYour query regarding "${queryData.query}" has been resolved. Thank you for reaching out to us!\n\nBest regards,\nThe Management Team`
+                };
+
+                transporter.sendMail(mailOptions, (error, info) => {
+                    if (error) {
+                        console.log(error);
+                    } else {
+                        console.log('Email notification sent: ' + info.response);
+                    }
+                });
+
+
             });
-
-            const mailOptions = {
-                from: process.env.email_id,
-                to: queryData.email,
-                subject: 'Query Resolution',
-                text: `Dear ${queryData.name},\n\nYour query regarding "${queryData.query}" has been resolved. Thank you for reaching out to us!\n\nBest regards,\nThe Management Team`
-            };
-
-            console.log(mailOptions)
-
-            transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
-                    console.log(error);
-                } else {
-                    console.log('Email notification sent: ' + info.response);
-                }
-            });
-
-            res.redirect('/management');
-        });
+        }
+        res.redirect('/management');
     });
 });
 
 // Start the server
-app.listen(port,'0.0.0.0',() => {
+app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
