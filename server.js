@@ -41,6 +41,9 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/home.html');
 });
 
+app.get('/home', (req, res) => {
+    res.sendFile(__dirname + '/index.html');
+});
 // User side interface - User form page
 app.get('/user', (req, res) => {
     res.sendFile(__dirname + '/user_interface.html');
