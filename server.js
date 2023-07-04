@@ -38,7 +38,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // User side interface - Index page
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
+    res.sendFile(__dirname + '/home.html');
 });
 
 // User side interface - User form page
