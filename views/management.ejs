@@ -153,34 +153,34 @@
         </h2>
         <table>
             <tr>
-                <th>Query ID</th>
-                <th>Date and Time</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Emp ID</th>
-                <th>Course</th>
-                <th>Year</th>
-                <th>Branch</th>
-                <th>Section</th>
-                <th>Lab</th>
-                <th>Lab Room Number</th>
-                <th>Block Number</th>
-                <th>Floor Number</th>
-                <th>Query</th>
-                <th>Token Number</th>
-                <th>Action</th>
+                <th style="min-width: 70px;">Query ID</th>
+                <!-- <th>Date and Time</th> -->
+                <th style="min-width: 120px;">Name</th>
+                <th style="min-width: 120px;">Email</th>
+                <th style="min-width: 60px;">Emp ID</th>
+                <th style="min-width: 60px;">Course</th>
+                <!-- <th>Year</th> -->
+                <th style="min-width: 60px;">Branch</th>
+                <!-- <th>Section</th> -->
+                <th style="min-width: 30px;">Lab</th>
+                <th style="min-width: 60px;">Lab Room No.</th>
+                <th style="min-width: 80px;">Block No.</th>
+                <th style="min-width: 80px;">Floor No.</th>
+                <th style="min-width: 200px;">Query</th>
+                <th style="min-width: 80px;">Token No.</th>
+                <th style="min-width: 30px;">Action</th>
             </tr>
             <% for (let i=0; i < queries.length; i++) { %>
                 <tr>
                     <td><%- queries[i].id %></td>
-                    <td><%- queries[i].submission_date %></td>
+                    <!-- <td><%- queries[i].submission_date %></td> -->
                     <td><%- queries[i].name %></td>
                     <td><%- queries[i].email %></td>
                     <td><%- queries[i].empid %></td>
                     <td><%- queries[i].course %></td>
-                    <td><%- queries[i].year %></td>
+                    <!-- <td><%- queries[i].year %></td> -->
                     <td><%- queries[i].branch %></td>
-                    <td><%- queries[i].section %></td>
+                    <!-- <td><%- queries[i].section %></td> -->
                     <td><%- queries[i].lab %></td>
                     <td><%- queries[i].room %></td>
                     <td><%- queries[i].block_no %></td>
