@@ -49,6 +49,10 @@ app.get('/user', (req, res) => {
     res.sendFile(__dirname + '/user_interface.html');
 });
 
+app.get('/validate', (req, res) => {
+    res.sendFile(__dirname + '/validate.html');
+});
+
 // Management side interface
 app.get('/management', (req, res) => {
     db.query('SELECT * FROM queries WHERE resolved = "Pending" OR resolved = "Processing"', (err, results) => {
