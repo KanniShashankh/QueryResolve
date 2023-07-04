@@ -53,6 +53,10 @@ app.get('/validate', (req, res) => {
     res.sendFile(__dirname + '/validate.html');
 });
 
+app.get('/cmr-logo', (req, res) => {
+    res.sendFile(__dirname + '/labpic.jpeg');
+});
+
 // Management side interface
 app.get('/management', (req, res) => {
     db.query('SELECT * FROM queries WHERE resolved = "Pending" OR resolved = "Processing"', (err, results) => {
