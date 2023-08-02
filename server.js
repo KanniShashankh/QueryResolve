@@ -102,9 +102,7 @@ app.post('/submit_query', async (req, res) => {
     let escapedQuery = db.escape(query);
     const generalOptions  = ["Internet Not Working for all PCs", "Projector Not Working", "Projector Speaker Not Working"];
     if(!generalOptions.includes(escapedQuery)){
-        console.log("new query", escapedQuery);
-        escapedQuery = await generateResponse(escapedQuery);
-        console.log("CHATGPT query", escapedQuery);
+        escapedQuery = await generateResponse(escapedQuery, lab);
     }
     const queryData = {
         name,
@@ -169,10 +167,10 @@ const configuration = new Configuration({
   const conversationContext = [];
   const currentMessages = [];
   
-const generateResponse = async (prompt) => {
+const generateResponse = async (prompt, lab) => {
     try {
       const modelId = "gpt-3.5-turbo";
-      const promptText = `You are given a query description here, summary the query into one sentence. Remove unnessary context, and only let me know the exact problem. ${prompt}\n\nResponse:`;
+      const promptText = `You are given a description of a problem in ${lab} lab, Provide the short summary of the query in one sentence. Remove unnessary context, and only let me know the exact problem. ${prompt}\n\nResponse:`;
   
       for (const [inputText, responseText] of conversationContext) {
         currentMessages.push({ role: "user", content: inputText });
