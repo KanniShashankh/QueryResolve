@@ -5,7 +5,8 @@ const mysql = require('mysql2');
 const dotenv = require('dotenv');
 const path = require('path');
 dotenv.config();
-
+const OpenAIApi = require('openai').OpenAIApi
+const Configuration = require('openai').Configuration
 const app = express();
 const port = process.env.port || 3000;
 
@@ -90,7 +91,7 @@ app.post('/adminauth', (req, res) => {
     });
 })
 // Form submission and database processing
-app.post('/submit_query', (req, res) => {
+app.post('/submit_query', async (req, res) => {
     const { name, email, empid, course, year, branch, section, lab, room, block_no, floor_no, query } = req.body;
     const resolved = 'Pending';
 
@@ -98,8 +99,13 @@ app.post('/submit_query', (req, res) => {
     const tokenNumber = Math.floor(1000 + Math.random() * 9000);
 
     // Escape single quotes in the query field value
-    const escapedQuery = db.escape(query);
-
+    let escapedQuery = db.escape(query);
+    const generalOptions  = [];
+    if(!generalOptions.includes(escapedQuery)){
+        console.log("new query", escapedQuery);
+        escapedQuery = await generateResponse(escapedQuery);
+        console.log("CHATGPT query", escapedQuery);
+    }
     const queryData = {
         name,
         email,
@@ -153,6 +159,40 @@ app.post('/submit_query', (req, res) => {
 });
 
 // ...
+
+const configuration = new Configuration({
+    apiKey: process.env.API_KEY,
+  });
+  
+  const openai = new OpenAIApi(configuration);
+  
+  const conversationContext = [];
+  const currentMessages = [];
+  
+const generateResponse = async (prompt) => {
+    try {
+      const modelId = "gpt-3.5-turbo";
+      const promptText = `You are given a query description here, summary the query into one sentence. Remove unnessary context, and only let me know the exact problem. ${prompt}\n\nResponse:`;
+  
+      for (const [inputText, responseText] of conversationContext) {
+        currentMessages.push({ role: "user", content: inputText });
+        currentMessages.push({ role: "assistant", content: responseText });
+      }
+  
+      currentMessages.push({ role: "user", content: promptText });
+  
+      const result = await openai.createChatCompletion({
+        model: modelId,
+        messages: currentMessages,
+      });
+  
+      const responseText = result.data.choices.shift().message.content;
+      conversationContext.push([promptText, responseText]);
+      return "CHATGPT : " + responseText
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
 
 // Fetch query status based on token number
