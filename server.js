@@ -186,7 +186,7 @@ const generateResponse = async (prompt, lab) => {
   
       const responseText = result.data.choices.shift().message.content;
       conversationContext.push([promptText, responseText]);
-      return "CHATGPT : " + responseText
+      return responseText
     } catch (err) {
       console.error(err);
     }
