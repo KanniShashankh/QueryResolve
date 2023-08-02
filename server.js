@@ -100,7 +100,7 @@ app.post('/submit_query', async (req, res) => {
 
     // Escape single quotes in the query field value
     let escapedQuery = db.escape(query);
-    const generalOptions  = [];
+    const generalOptions  = ["Internet Not Working for all PCs", "Projector Not Working", "Projector Speaker Not Working"];
     if(!generalOptions.includes(escapedQuery)){
         console.log("new query", escapedQuery);
         escapedQuery = await generateResponse(escapedQuery);
