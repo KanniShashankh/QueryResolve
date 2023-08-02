@@ -49,9 +49,11 @@ app.get('/user', (req, res) => {
     res.sendFile(__dirname + '/user_interface.html');
 });
 
-app.get('/validate', (req, res) => {
-    res.sendFile(__dirname + '/validate.html');
+app.get('/auth', (req, res) => {
+    res.sendFile(__dirname + '/admin.html');
 });
+
+
 
 app.get('/cmr-logo', (req, res) => {
     res.sendFile(__dirname + '/labpic.jpeg');
@@ -68,7 +70,25 @@ app.get('/management', (req, res) => {
 });
 
 // ...
-
+app.post('/adminauth', (req, res) => {
+    const { username, password } = req.body;
+    
+    db.query('SELECT * FROM users WHERE username="admin"', (err, result) => {
+        if (err) {
+            console.log('Error while fetching query status');
+            throw err;
+        }
+        console.log(result);
+        const queryStatus = result[0];
+        console.log("ok" , queryStatus);
+        if(queryStatus.password === password && queryStatus.username === username){
+            res.redirect('/management');
+        }
+        else{
+            res.redirect('/auth');
+        }
+    });
+})
 // Form submission and database processing
 app.post('/submit_query', (req, res) => {
     const { name, email, empid, course, year, branch, section, lab, room, block_no, floor_no, query } = req.body;
