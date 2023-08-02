@@ -159,26 +159,19 @@
           <option value="4">Fourth Year</option>
         </select>
 
+
+        <!-- <label for="section">Section:</label>
+        <input type="text" id="section" name="section" required /> -->
+
         <label for="branch">Branch:</label>
-        <select id="branch" name="branch" required>
-          <option value="">Select Branch</option>
-          <option value="CSE">CSE</option>
-          <option value="ECE">ECE</option>
-          <option value="EEE">EEE</option>
-          <option value="MECH">MECH</option>
-          <option value="CIVIL">CIVIL</option>
-          <option value="CSM">CSM</option>
-          <option value="AIML">AIML</option>
-          <option value="CSC">CSC</option>
-          <option value="CSD">CSD</option>
-          <option value="AIDS">AIDS</option>
+        <select name="branch" id="branch">
+          <option value="" selected="selected">Select Branch</option>
         </select>
-
-        <label for="section">Section:</label>
-        <input type="text" id="section" name="section" required />
-
+     
         <label for="lab">Lab:</label>
-        <input type="text" id="lab" name="lab" required />
+       <select name="lab" id="lab">
+          <option value="" selected="selected">Please select Branch first</option>
+        </select>
 
         <label for="room">Lab Room Number:</label>
         <input type="text" id="room" name="room" required />
@@ -186,8 +179,8 @@
         <label for="block_no">Block No:</label>
         <input type="text" id="block-no" name="block_no" required />
 
-        <label for="floor_no">Floor No:</label>
-        <input type="text" id="floor-no" name="floor_no" required />
+        <!-- <label for="floor_no">Floor No:</label>
+        <input type="text" id="floor-no" name="floor_no" required /> -->
 
 
         <label for="query">Query:</label>
@@ -214,6 +207,34 @@
   </div>
 
   <script>
+    var labObject = {
+          "CSE": ["Java Lab", "DAA Lab", "DBMS Lab", "Lists"],
+          "ECE": ["Links", "Images", "Tables", "Lists"],
+          "EEE": ["Links", "Images", "Tables", "Lists"],
+          "CIVIL": ["Links", "Images", "Tables", "Lists"],
+          "MECH": ["Links", "Images", "Tables", "Lists"],
+          "CSM": ["Java Lab", "Images", "Tables", "Lists"],
+          "CSD": ["Links", "Images", "Tables", "Lists"],
+          "CSC": ["Cyber Security", "Computer Networks", "Operating System", "DBMS Lab", "DAA Lab"],
+          "H&S": ["Engineering Chemistry", "Applied Physics", "Internet of Things", "Engineering Drawing"],
+          "CEER": ["ISI LAB", "EEP Lab", "SIP Lab"],
+        }
+        window.onload = function() {
+  var branchSel = document.getElementById("branch");
+  var chapterSel = document.getElementById("lab");
+  for (var x in labObject) {
+    branchSel.options[branchSel.options.length] = new Option(x, x);
+  }
+  branchSel.onchange = function() {
+  //empty Chapters dropdown
+  chapterSel.length = 1;
+    //display correct values
+    var z = labObject[branchSel.value];
+    for (var i = 0; i < z.length; i++) {
+      chapterSel.options[chapterSel.options.length] = new Option(z[i], z[i]);
+    }
+  }
+}
     function showOtherOption() {
       var querySelect = document.getElementById("query");
       var otherQuery = document.getElementById("other-query");

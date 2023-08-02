@@ -104,14 +104,14 @@ app.post('/submit_query', (req, res) => {
         name,
         email,
         empid,
-        course,
-        year,
+        // course,
+        // year,
         branch,
-        section,
+        // section,
         lab,
         room,
         block_no,
-        floor_no,
+        // floor_no,
         query: escapedQuery,
         resolved,
         token_number: tokenNumber
@@ -177,14 +177,13 @@ app.get('/status', (req, res) => {
 //Updating query status
 app.post('/update_query', (req, res) => {
     const { queryId, action } = req.body;
-
-    db.query('UPDATE queries SET resolved = ? WHERE id = ?', [action, queryId], (err, result) => {
+    db.query('UPDATE queries SET resolved = ? WHERE token_number = ?', [action, queryId], (err, result) => {
         if (err) {
             console.log('Error while updating the query status');
             throw err;
         }
         if (action === 'Resolved') {
-            db.query('SELECT * FROM queries WHERE id = ?', queryId, (err, result) => {
+            db.query('SELECT * FROM queries WHERE token_number = ?', queryId, (err, result) => {
                 if (err) {
                     throw err;
                 }
@@ -213,8 +212,6 @@ app.post('/update_query', (req, res) => {
                         console.log('Email notification sent: ' + info.response);
                     }
                 });
-
-
             });
         }
         res.redirect('/management');
