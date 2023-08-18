@@ -35,7 +35,8 @@ CREATE TABLE `queries` (
   `floor_no` varchar(20) DEFAULT NULL,
   `query` varchar(1000) DEFAULT NULL,
   `resolved` varchar(30) DEFAULT NULL,
-  `token_number` int DEFAULT NULL
+  `token_number` int DEFAULT NULL,
+  `created_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

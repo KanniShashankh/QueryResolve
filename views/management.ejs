@@ -10,8 +10,9 @@
         }
 
         .container {
-            max-width: 1500px;
-            
+            /* max-width: 1500px; */
+            white-space: nowrap; /* Prevent text from wrapping to the next line */
+            overflow-x: scroll; /* Display a horizontal scrollbar when content overflows */
             margin: 0 auto;
             padding: 20px;
             background-color: #fff;
@@ -154,26 +155,26 @@
         <table>
             <tr>
                 <th style="min-width: 40px;">S No</th>
-                <!-- <th>Date and Time</th> -->
-                <th style="min-width: 120px;">Name</th>
-                <th style="min-width: 120px;">Email</th>
-                <th style="min-width: 60px;">Emp ID</th>
+                <th style="min-width: 140px;">Date and Time</th>
+                <th style="min-width: 140px;">Name</th>
+                <th style="min-width: 140px;">Email</th>
+                <th style="min-width: 100px;">Emp ID</th>
                 <!-- <th style="min-width: 60px;">Course</th> -->
                 <!-- <th>Year</th> -->
                 <th style="min-width: 60px;">Branch</th>
                 <!-- <th>Section</th> -->
                 <th style="min-width: 80px;">Lab</th>
-                <th style="min-width: 60px;">Lab Room No.</th>
+                <th style="min-width: 80px;">Lab Room No.</th>
                 <th style="min-width: 80px;">Block No.</th>
                 <!-- <th style="min-width: 80px;">Floor No.</th> -->
-                <th style="min-width: 200px;">Query</th>
+                <th style="min-width: 300px;">Query</th>
                 <th style="min-width: 80px;">Token No.</th>
                 <th style="min-width: 30px;">Action</th>
             </tr>
             <% for (let i=0; i < queries.length; i++) { %>
                 <tr>
                     <td><%- i + 1 %></td>
-                    <!-- <td><%- queries[i].submission_date %></td> -->
+                    <td><%- queries[i].format_time %></td>
                     <td><%- queries[i].name %></td>
                     <td><%- queries[i].email %></td>
                     <td><%- queries[i].empid %></td>

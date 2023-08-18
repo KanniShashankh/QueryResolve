@@ -62,7 +62,12 @@ app.get('/cmr-logo', (req, res) => {
 
 // Management side interface
 app.get('/management', (req, res) => {
-    db.query('SELECT * FROM queries WHERE resolved = "Pending" OR resolved = "Processing"', (err, results) => {
+    
+    db.query(`SELECT *,
+    DATE_FORMAT(created_time, '%b %d %Y %H:%i:%s') AS format_time
+    FROM queries
+    WHERE resolved IN ('Pending', 'Processing')
+    ORDER BY created_time DESC;`, (err, results) => {
         if (err) {
             throw err;
         }
@@ -79,9 +84,7 @@ app.post('/adminauth', (req, res) => {
             console.log('Error while fetching query status');
             throw err;
         }
-        console.log(result);
         const queryStatus = result[0];
-        console.log("ok" , queryStatus);
         if(queryStatus.password === password && queryStatus.username === username){
             res.redirect('/management');
         }
