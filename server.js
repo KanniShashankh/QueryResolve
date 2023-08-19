@@ -79,9 +79,9 @@ app.get('/management', (req, res) => {
 app.post('/adminauth', (req, res) => {
     const { username, password } = req.body;
     
-    db.query('SELECT * FROM users WHERE username="admin"', (err, result) => {
+    db.query('SELECT * FROM users WHERE username=admin', (err, result) => {
         if (err) {
-            console.log('Error while fetching query status');
+            console.error('Error while fetching query status', err);
             throw err;
         }
         const queryStatus = result[0];
@@ -126,7 +126,7 @@ app.post('/submit_query', async (req, res) => {
 
     db.query('INSERT INTO queries SET ?', queryData, (err, result) => {
         if (err) {
-            console.log('Error while inserting data into DB');
+            console.error('Error while inserting data into DB', err);
             throw err;
         }
         console.log(tokenNumber);
@@ -151,8 +151,7 @@ app.post('/submit_query', async (req, res) => {
 
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
-            console.log('Error while sending registered mail');
-            console.log(error);
+            console.error('Error while sending registered mail' ,error);
         } else {
             console.log('Email notification sent: ' + info.response);
         }
@@ -220,7 +219,7 @@ app.post('/update_query', (req, res) => {
     const { queryId, action } = req.body;
     db.query('UPDATE queries SET resolved = ? WHERE token_number = ?', [action, queryId], (err, result) => {
         if (err) {
-            console.log('Error while updating the query status');
+            console.error('Error while updating the query status', err);
             throw err;
         }
         if (action === 'Resolved') {
