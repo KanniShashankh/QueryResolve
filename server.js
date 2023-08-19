@@ -79,7 +79,7 @@ app.get('/management', (req, res) => {
 app.post('/adminauth', (req, res) => {
     const { username, password } = req.body;
     
-    db.query('SELECT * FROM users WHERE username=admin', (err, result) => {
+    db.query('SELECT * FROM users WHERE username = "admin"', (err, result) => {
         if (err) {
             console.error('Error while fetching query status', err);
             throw err;
